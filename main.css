@@ -1,0 +1,17 @@
+*{
+  box-sizing: border-box;
+}
+
+#timeline {
+  border: 1px solid black;
+  width: 400px;
+  height: 300px;
+  position: relative;
+}
+
+.tile {
+  border: 1px solid black;
+  position: absolute;
+  left: 40px;
+  top: 50px;
+}
