@@ -36,14 +36,28 @@ const settings = {
 const timeline = document.getElementById("timeline");
 
 // Set up event handlers
-const btnZoomIn = document.getElementById('btnZoomIn');
-const btnZoomOut = document.getElementById('btnZoomOut');
-
-btnZoomIn.addEventListener('click', btnZoomInHandler, false);
-btnZoomOut.addEventListener('click', btnZoomOutHandler, false);
+// const btnZoomIn = document.getElementById('btnZoomIn');
+// const btnZoomOut = document.getElementById('btnZoomOut');
+//
+// btnZoomIn.addEventListener('click', btnZoomInHandler, false);
+// btnZoomOut.addEventListener('click', btnZoomOutHandler, false);
 
 // Clear timeline
 timeline.innerHTML = "";
+
+const startTimeInMins = (scheduleState.startTime.getUTCHours() * 60) +
+                        scheduleState.startTime.getUTCMinutes() +
+                        (scheduleState.startTime.getUTCSeconds() / 60) +
+                        (scheduleState.startTime.getUTCMilliseconds() / 60000);
+
+const scheduleWidthMins = timeline.offsetWidth * scheduleState.zoom;
+console.log(scheduleWidthMins);
+
+let scheduleEndTime = new Date(scheduleState.startTime);
+// const temp = new Date(scheduleWidthMins * 60000);
+scheduleEndTime = new Date(scheduleEndTime.getTime() + new Date(scheduleWidthMins * 60000).getTime());
+// const temp2 = scheduleEndTime.getTime() + temp.getTime();
+console.log(`Schedule Times: ${scheduleState.startTime.toUTCString()} - ${scheduleEndTime.toUTCString()}`);
 
 for (let tileData of DATA) {
   const tileDiv = createTileElement(tileData, timeline);
@@ -51,8 +65,6 @@ for (let tileData of DATA) {
   // Add tile to timeline
   timeline.appendChild(tileDiv);
 }
-
-// const scheduleEndTime =
 
 function createTileElement(tileData, timeline) {
   // Check tileData has the properties expected
