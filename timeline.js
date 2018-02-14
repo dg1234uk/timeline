@@ -1,91 +1,120 @@
 // Test Data
-const data = [
+const DATA = [
   {
-    'title': 'tile1',
-    'startTime': '2',
-    'endTime': '4'
+    id: 0,
+    title: "tile1",
+    startTime: new Date(Date.UTC(18, 2, 13, 9, 0, 0)),
+    endTime: new Date(Date.UTC(18, 2, 13, 10, 0, 0))
   },
   {
-    'title': 'tile2',
-    'startTime': '2',
-    'endTime': '4'
+    id: 1,
+    title: "tile2",
+    startTime: new Date(Date.UTC(18, 2, 13, 9, 0, 0)),
+    endTime: new Date(Date.UTC(18, 2, 13, 10, 0, 0))
   },
   {
-    'title': 'tile3',
-    'startTime': '2',
-    'endTime': '7'
+    id: 2,
+    title: "tile3",
+    startTime: new Date(Date.UTC(18, 2, 13, 9, 0, 0)),
+    endTime: new Date(Date.UTC(18, 2, 13, 10, 0, 0))
   }
 ];
 
-const settings = {
-  'tileHeight': 20,
-  'tileMargin': 10,
+// Mins to pixels ratio
+const scheduleState = {
+  startTime: new Date(Date.UTC(18, 2, 13, 6, 0, 0)),
+  zoom: 1
 }
 
-// Get reference to timeline div
-const timeline = document.getElementById('timeline');
+const settings = {
+  tileMargin: 10,
+  tileHeight: 20,
+  tileTop: 20
+};
 
-// Clear Timeline
-timeline.innerText = '';
+// Get reference to timeline
+const timeline = document.getElementById("timeline");
 
-// Loop through data and create and position tile for each
-for (tileData of data) {
-  // Check tileData has required properties
+// Set up event handlers
+const btnZoomIn = document.getElementById('btnZoomIn');
+const btnZoomOut = document.getElementById('btnZoomOut');
+
+btnZoomIn.addEventListener('click', btnZoomInHandler, false);
+btnZoomOut.addEventListener('click', btnZoomOutHandler, false);
+
+// Clear timeline
+timeline.innerHTML = "";
+
+for (let tileData of DATA) {
+  const tileDiv = createTileElement(tileData, timeline);
+
+  // Add tile to timeline
+  timeline.appendChild(tileDiv);
+}
+
+// const scheduleEndTime =
+
+function createTileElement(tileData, timeline) {
+  // Check tileData has the properties expected
   if (
-    (tileData.hasOwnProperty('title') === false) ||
-    (tileData.hasOwnProperty('startTime') === false) ||
-    (tileData.hasOwnProperty('endTime') === false)
+    tileData.hasOwnProperty("id") === false ||
+    tileData.hasOwnProperty("title") === false ||
+    tileData.hasOwnProperty("startTime") === false ||
+    tileData.hasOwnProperty("endTime") === false
   ) {
-    throw new Error('tileData object does not have expected properties')
+    throw new Error("tileData object does not have required properties");
   }
+  // Check if timeline is a HTMLCollection
+  /*
+  if (!(timeline instanceof HTMLCollection)) {
+    throw new Error('timeline is not an HTMLCollection');
+  }
+  */
 
-  const div = document.createElement('div');
+  const tileDiv = document.createElement("div");
+  tileDiv.className = "tile";
 
-  // Set div to default tile style
-  div.className = 'tile';
+  // Calculate pixel positions of tile from time
+  const minsToX = 10;
 
-  // Set tile title
-  div.innerText = tileData.title;
+  tilePos = {
+    left: tileData.startTime.getUTCHours() * minsToX,
+    width: (tileData.endTime.getUTCHours() - tileData.startTime.getUTCHours()) * minsToX * 5,
+    height: settings.tileHeight,
+    top: settings.tileTop
+  };
 
-  // Tile collision detection vertical resolve
-  timelineChildren = timeline.children;
-
-  // startTime to pixels relative to timeline div
-  const startTimePixels = tileData.startTime * 10;
-  div.style.left = `${startTimePixels}px`;
-
-  // Duration to pixels
-  const durationPixels = (tileData.endTime - tileData.startTime) * 15
-  div.style.width = `${durationPixels}px`;
-
-  // Set tile height
-  const tileHeight = settings.tileHeight;
-  div.style.height = `${tileHeight}px`;
-  // Set defualt top value, will be adjusted by collision detection if conflict
-  const defaultTop = 20;
-  let divTop = defaultTop;
-  // Collision detection, must be after div left and width have been set
-  for (element of timelineChildren) {
-    // console.log('element', element);
-    // console.log('div', div);
-    if (element === div) {
-      console.log('ELEMENT and DIV are equal OMG 🙀');
-    }
-    // AABB collision detection between divs
+  // Collision Detection of tile
+  const timelineChildren = timeline.children;
+  for (let element of timelineChildren) {
     if (
-      element.offsetLeft < startTimePixels + durationPixels &&
-      element.offsetLeft + element.offsetWidth > startTimePixels &&
-      element.offsetTop < divTop + tileHeight &&
-      element.offsetTop + element.offsetHeight > divTop
+      element.offsetLeft < tilePos.left + tilePos.width &&
+      element.offsetLeft + element.offsetWidth > tilePos.left &&
+      element.offsetTop < tilePos.top + tilePos.height &&
+      element.offsetTop + element.offsetHeight > tilePos.top
     ) {
-      // console.log('collision');
-      // Resolve collision by adding height of div collided with + margin
-      divTop += element.offsetHeight + settings.tileMargin
-      // recursively call collision detection to redect? Not sure!?!
+      // Move conflicting tile down
+      tilePos.top += element.offsetHeight + settings.tileMargin;
     }
+    // collision detected!
+    tileDiv.style.top = `${tilePos.top}px`;
   }
-  div.style.top = `${divTop}px`;
 
-  // Add tile div to timeline.
-  timeline.appendChild(div);
+  // Set content & tile div absolute positions
+  tileDiv.dataset.id = tileData.id;
+  tileDiv.innerText = tileData.title;
+  tileDiv.style.left = `${tilePos.left}px`;
+  tileDiv.style.width = `${tilePos.width}px`;
+  tileDiv.style.height = `${tilePos.height}px`;
+  tileDiv.style.top = `${tilePos.top}px`;
+
+  return tileDiv;
+}
+
+function btnZoomInHandler(e) {
+  scheduleState.zoom++;
+}
+
+function btnZoomOutHandler(e) {
+  scheduleState.zoom--;
 }
