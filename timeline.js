@@ -32,8 +32,8 @@ const settings = {
   tileTop: 20
 };
 
-// Get reference to timeline
-const timeline = document.getElementById("timeline");
+// Get reference to schedule
+const schedule = document.getElementById("schedule");
 
 // Set up event handlers
 const btnZoomIn = document.getElementById('btnZoomIn');
@@ -42,23 +42,23 @@ const btnZoomOut = document.getElementById('btnZoomOut');
 btnZoomIn.addEventListener('click', btnZoomInHandler, false);
 btnZoomOut.addEventListener('click', btnZoomOutHandler, false);
 
-renderTimeline();
+renderSchedule();
 
-function setScheduleEndTime(scheduleState, timeline) {
+function setScheduleEndTime(scheduleState, schedule) {
   if (scheduleState.hasOwnProperty('zoom') === false) {
     throw new Error(`scheduleState does not have zoom property`);
   }
   if (scheduleState.hasOwnProperty('startTime') === false) {
     throw new Error(`scheduleState does not have startTime property`);
   }
-  // Check if timeline is a HTMLElement
-  if (!(timeline instanceof HTMLElement)) {
-    throw new Error('timeline is not an HTMLCollection');
+  // Check if schedule is a HTMLElement
+  if (!(schedule instanceof HTMLElement)) {
+    throw new Error('schedule is not an HTMLCollection');
   }
 
-  // Convert pixel width of timeline to minutes using zoom (pixels:mins)
+  // Convert pixel width of schedule to minutes using zoom (pixels:mins)
   // debugger;
-  const scheduleWidthMins = timeline.offsetWidth * scheduleState.zoom;
+  const scheduleWidthMins = schedule.offsetWidth * scheduleState.zoom;
   // Set scheduleEndTime to start time then add scheduleWidthMins to get end time
   let scheduleEndTime = new Date(scheduleState.startTime);
   // Need to convert scheduleWidthMins to milliseconds, add, create new date.
@@ -67,7 +67,7 @@ function setScheduleEndTime(scheduleState, timeline) {
   return scheduleEndTime;
 }
 
-function createTileElement(tileData, timeline) {
+function createTileElement(tileData, schedule) {
   // Check tileData has the properties expected
   if (
     tileData.hasOwnProperty('id') === false ||
@@ -77,9 +77,9 @@ function createTileElement(tileData, timeline) {
   ) {
     throw new Error(`tileData (id:${tileData.id}) object does not have required properties`);
   }
-  // Check if timeline is a HTMLElement
-  if (!(timeline instanceof HTMLElement)) {
-    throw new Error('timeline is not an HTMLCollection');
+  // Check if schedule is a HTMLElement
+  if (!(schedule instanceof HTMLElement)) {
+    throw new Error('schedule is not an HTMLCollection');
   }
   // check times are Date objects
   if (!(tileData.startTime instanceof Date) || !(tileData.endTime instanceof Date)) {
@@ -115,8 +115,8 @@ function createTileElement(tileData, timeline) {
   };
 
   // Collision Detection of tile
-  const timelineChildren = timeline.children;
-  for (let element of timelineChildren) {
+  const scheduleChildren = schedule.children;
+  for (let element of scheduleChildren) {
     if (
       element.offsetLeft < tilePos.left + tilePos.width &&
       element.offsetLeft + element.offsetWidth > tilePos.left &&
@@ -141,24 +141,24 @@ function createTileElement(tileData, timeline) {
   return tileDiv;
 }
 
-function renderTimeline() {
-  // Clear timeline
-  timeline.innerHTML = "";
+function renderSchedule() {
+  // Clear schedule
+  schedule.innerHTML = "";
 
   // Save to scheduleState
-  scheduleState.scheduleEndTime = setScheduleEndTime(scheduleState, timeline);
+  scheduleState.scheduleEndTime = setScheduleEndTime(scheduleState, schedule);
 
   // Create div for each data
   for (let tileData of DATA) {
-    const tileDiv = createTileElement(tileData, timeline);
-    // Add tile to timeline
-    timeline.appendChild(tileDiv);
+    const tileDiv = createTileElement(tileData, schedule);
+    // Add tile to schedule
+    schedule.appendChild(tileDiv);
   }
 }
 
 function btnZoomInHandler(e) {
   scheduleState.zoom += 0.1;
-  renderTimeline();
+  renderSchedule();
 }
 
 function btnZoomOutHandler(e) {
@@ -167,5 +167,5 @@ function btnZoomOutHandler(e) {
   if (scheduleState.zoom < 0.1) {
     scheduleState.zoom = 0.1;
   }
-  renderTimeline();
+  renderSchedule();
 }

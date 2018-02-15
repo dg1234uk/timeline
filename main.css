@@ -2,16 +2,99 @@
   box-sizing: border-box;
 }
 
+body {
+  background-color: #E9F0F0;
+  color: #5C5E5E;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+#app {
+  background-color: #F5FAFA;
+  box-shadow: 0px 2px 21px 0px rgba(0, 0, 0, 0.3);
+  width: 400px;
+  margin: auto;
+}
+
+#date {
+  height: 120px;
+}
+
+.dd {
+  font-size: 68px;
+	font-weight: 100;
+  letter-spacing: 3.57px;
+  margin-left: 20px;
+  margin-top: 10px;
+  float: left;
+}
+
+.dayDate {
+  display: inline-block;
+  margin-top: 20px;
+  font-weight: normal;
+}
+
+.thDay {
+  font-size: 24px;
+	font-weight: 300;
+  margin-left: 5px;
+}
+
+.monthYear {
+  float: left;
+  font-size: 12px;
+	font-weight: 300;
+  margin-left: 25px;
+  margin-top: -10px;
+  clear: left;
+}
+
 #timeline {
-  border: 1px solid black;
+  background-color: #F0F5F5;
+  height: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.timeBlock {
+  display: inline-block;
+  height: inherit;
+  border-left: 1px solid #5C5E5E;
+  padding-left: 2px;
+  padding-top: 1px;
+  width: 80px;
+}
+
+.hours {
+  font-size: 16px;
+  font-weight: 300;
+}
+
+.minutes {
+  font-size: 10px;
+  font-weight: 300;
+  padding-left: 1px;
+}
+
+.timeBlock:first-child {
+  margin-left: 80px;
+}
+
+#schedule {
+  /* border: 1px solid black; */
   width: 400px;
   height: 300px;
   position: relative;
 }
 
 .tile {
-  border: 1px solid black;
   position: absolute;
   left: 40px;
   top: 50px;
+  background-color: #4C7CFF;
+  color: white;
+  font-size: 12px;
+  line-height: 20px;
+  padding-left: 10px;
+  border-radius: 3px;
 }
