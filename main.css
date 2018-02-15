@@ -54,26 +54,27 @@ body {
   height: 20px;
   white-space: nowrap;
   overflow: hidden;
+  box-shadow: 0px 1px 6px -3px rgba(0, 0, 0, 0.5);
 }
 
 .timeBlock {
   display: inline-block;
   height: inherit;
-  border-left: 1px solid #5C5E5E;
+  border-left: 1px solid #BCC2C2;
   padding-left: 2px;
   padding-top: 1px;
   width: 80px;
 }
 
 .hours {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 300;
 }
 
 .minutes {
-  font-size: 10px;
+  font-size: 8px;
   font-weight: 300;
-  padding-left: 1px;
+  padding-left: 0px;
 }
 
 .timeBlock:first-child {

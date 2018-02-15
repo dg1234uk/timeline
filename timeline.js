@@ -42,9 +42,12 @@ const btnZoomOut = document.getElementById('btnZoomOut');
 btnZoomIn.addEventListener('click', btnZoomInHandler, false);
 btnZoomOut.addEventListener('click', btnZoomOutHandler, false);
 
+render();
 
-renderSchedule();
-renderTimeline();
+function render() {
+  renderSchedule();
+  renderTimeline();
+}
 
 function setScheduleEndTime(scheduleState, schedule) {
   if (scheduleState.hasOwnProperty('zoom') === false) {
@@ -159,7 +162,7 @@ function renderSchedule() {
 
 function btnZoomInHandler(e) {
   scheduleState.zoom += 0.1;
-  renderSchedule();
+  render();
 }
 
 function btnZoomOutHandler(e) {
@@ -168,11 +171,12 @@ function btnZoomOutHandler(e) {
   if (scheduleState.zoom < 0.1) {
     scheduleState.zoom = 0.1;
   }
-  renderSchedule();
+  render();
 }
 
 function renderTimeline() {
-
+  // TODO: More like initiate timeline, rather than render sliding update
+  // TODO: Clear contents and make a div for each time to cover width
   const startTimeInMins = (scheduleState.startTime.getUTCHours() * 60) +
                           scheduleState.startTime.getUTCMinutes() +
                           (scheduleState.startTime.getUTCSeconds() / 60) +
@@ -180,13 +184,62 @@ function renderTimeline() {
 
 
   const timeline = document.getElementById('timeline');
-  const firstTimeBlock = timeline.firstElementChild;
 
-  console.log(startTimeInMins);
-  const startX = (startTimeInMins % 60) * scheduleState.zoom
-  firstTimeBlock.style.marginLeft = `${startX}px`;
-  console.log(startX);
+  timeline.innerHTML = "";
+
+  // Convert pixel width of schedule to minutes using zoom (pixels:mins)
+  const scheduleWidthMins = schedule.offsetWidth * scheduleState.zoom;
+
+  // If first time is a whole hour place at 0 otherwise offset by number of mins
+  const startX = (startTimeInMins % 60) * scheduleState.zoom;
+
+  // 60 minutes * schedule zoom
+  const timeBlockWidth = 60 * scheduleState.zoom;
+
+  const timelineWidth = timeline.offsetWidth;
+
+  const numberOfTimeBlocks = timelineWidth / timeBlockWidth;
+
+  // debugger;
+  for (let i = 0; i < numberOfTimeBlocks; i++) {
+    const time = new Date(scheduleState.startTime.getTime() + (i * 60 * 60 * 1000))
+    var isFirst = false;
+    if (i === 0) {
+      isFirst = true;
+    }
+    const tileBlockDiv = createTileBlockElement(time, timeBlockWidth, startX, isFirst);
+    timeline.appendChild(tileBlockDiv);
+  }
+}
+
+function createTileBlockElement(time, timeBlockWidth, startX, isFirst) {
+  // check time is a Date object
+  if (!(time instanceof Date)) {
+    throw new Error(`time is not time`);
+  }
+  if (typeof isFirst !== 'boolean') {
+    throw new Error(`isFirst should be type boolean`);
+  }
+
+  // Convert pixel width of schedule to minutes using zoom (pixels:mins)
+  const scheduleWidthMins = schedule.offsetWidth * scheduleState.zoom;
 
 
+  const tbDiv = document.createElement('div');
+  tbDiv.className = 'timeBlock';
+  var hours;
+  if (time.getUTCHours() < 10) {
+    hours = `0${time.getUTCHours()}`;
+  } else {
+    hours = time.getUTCHours();
+  }
+  // TODO: Add hours and minutes to their respective SPANs
+  tbDiv.innerText = `${hours}${time.getUTCMinutes()}`;
+  tbDiv.style.width = `${timeBlockWidth}px`;
 
+  if (isFirst) {
+    tbDiv.style.marginLeft = `${startX}px`;
+  }
+
+  return tbDiv;
 }
