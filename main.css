@@ -82,8 +82,8 @@ body {
 
 #schedule {
   /* border: 1px solid black; */
-  width: 400px;
-  height: 300px;
+  width: inherit;
+  height: 200px;
   position: relative;
 }
 

@@ -9,7 +9,7 @@ const DATA = [
   {
     id: 1,
     title: "tile2",
-    startTime: new Date(Date.UTC(18, 2, 13, 9, 0, 0)),
+    startTime: new Date(Date.UTC(18, 2, 13, 8, 0, 0)),
     endTime: new Date(Date.UTC(18, 2, 13, 10, 0, 0))
   },
   {
@@ -22,7 +22,7 @@ const DATA = [
 
 // Mins to pixels ratio
 const scheduleState = {
-  startTime: new Date(Date.UTC(18, 2, 13, 8, 0, 0)),
+  startTime: new Date(Date.UTC(18, 2, 13, 7, 30, 0)),
   zoom: 1
 }
 
@@ -33,7 +33,7 @@ const settings = {
 };
 
 // Get reference to schedule
-const schedule = document.getElementById("schedule");
+const schedule = document.getElementById('schedule');
 
 // Set up event handlers
 const btnZoomIn = document.getElementById('btnZoomIn');
@@ -42,7 +42,9 @@ const btnZoomOut = document.getElementById('btnZoomOut');
 btnZoomIn.addEventListener('click', btnZoomInHandler, false);
 btnZoomOut.addEventListener('click', btnZoomOutHandler, false);
 
+
 renderSchedule();
+renderTimeline();
 
 function setScheduleEndTime(scheduleState, schedule) {
   if (scheduleState.hasOwnProperty('zoom') === false) {
@@ -57,7 +59,6 @@ function setScheduleEndTime(scheduleState, schedule) {
   }
 
   // Convert pixel width of schedule to minutes using zoom (pixels:mins)
-  // debugger;
   const scheduleWidthMins = schedule.offsetWidth * scheduleState.zoom;
   // Set scheduleEndTime to start time then add scheduleWidthMins to get end time
   let scheduleEndTime = new Date(scheduleState.startTime);
@@ -168,4 +169,24 @@ function btnZoomOutHandler(e) {
     scheduleState.zoom = 0.1;
   }
   renderSchedule();
+}
+
+function renderTimeline() {
+
+  const startTimeInMins = (scheduleState.startTime.getUTCHours() * 60) +
+                          scheduleState.startTime.getUTCMinutes() +
+                          (scheduleState.startTime.getUTCSeconds() / 60) +
+                          (scheduleState.startTime.getUTCMilliseconds() / 60000);
+
+
+  const timeline = document.getElementById('timeline');
+  const firstTimeBlock = timeline.firstElementChild;
+
+  console.log(startTimeInMins);
+  const startX = (startTimeInMins % 60) * scheduleState.zoom
+  firstTimeBlock.style.marginLeft = `${startX}px`;
+  console.log(startX);
+
+
+
 }
