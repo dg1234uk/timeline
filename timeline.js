@@ -22,7 +22,7 @@ const DATA = [
 
 // Mins to pixels ratio
 const scheduleState = {
-  startTime: new Date(Date.UTC(18, 2, 13, 7, 30, 0)),
+  startTime: new Date(Date.UTC(18, 2, 13, 7, 15, 0)),
   zoom: 1
 }
 
@@ -191,7 +191,15 @@ function renderTimeline() {
   const scheduleWidthMins = schedule.offsetWidth * scheduleState.zoom;
 
   // If first time is a whole hour place at 0 otherwise offset by number of mins
-  const startX = (startTimeInMins % 60) * scheduleState.zoom;
+  var startX;
+  var time = new Date(scheduleState.startTime.getTime());
+  if ((startTimeInMins % 60) === 0) {
+    startX = 0;
+    time.setUTCHours(time.getUTCHours() - 1, 0, 0, 0);
+  } else {
+    startX = (60 - (startTimeInMins % 60)) * scheduleState.zoom;
+    time.setUTCHours(time.getUTCHours(), 0, 0, 0);
+  }
 
   // 60 minutes * schedule zoom
   const timeBlockWidth = 60 * scheduleState.zoom;
@@ -202,23 +210,18 @@ function renderTimeline() {
 
   // debugger;
   for (let i = 0; i < numberOfTimeBlocks; i++) {
-    const time = new Date(scheduleState.startTime.getTime() + (i * 60 * 60 * 1000))
-    var isFirst = false;
-    if (i === 0) {
-      isFirst = true;
-    }
-    const tileBlockDiv = createTileBlockElement(time, timeBlockWidth, startX, isFirst);
+    // debugger
+    time.setUTCHours(time.getUTCHours() + 1);
+    const tileBlockDiv = createTileBlockElement(time, timeBlockWidth, startX);
     timeline.appendChild(tileBlockDiv);
   }
+  timeline.firstElementChild.style.marginLeft = `${startX}px`;
 }
 
-function createTileBlockElement(time, timeBlockWidth, startX, isFirst) {
+function createTileBlockElement(time, timeBlockWidth, startX) {
   // check time is a Date object
   if (!(time instanceof Date)) {
     throw new Error(`time is not time`);
-  }
-  if (typeof isFirst !== 'boolean') {
-    throw new Error(`isFirst should be type boolean`);
   }
 
   // Convert pixel width of schedule to minutes using zoom (pixels:mins)
@@ -227,19 +230,29 @@ function createTileBlockElement(time, timeBlockWidth, startX, isFirst) {
 
   const tbDiv = document.createElement('div');
   tbDiv.className = 'timeBlock';
-  var hours;
+  var hours, minutes;
   if (time.getUTCHours() < 10) {
     hours = `0${time.getUTCHours()}`;
   } else {
     hours = time.getUTCHours();
   }
-  // TODO: Add hours and minutes to their respective SPANs
-  tbDiv.innerText = `${hours}${time.getUTCMinutes()}`;
+
+  if (time.getUTCMinutes() < 10) {
+    minutes = `0${time.getUTCMinutes()}`;
+  } else {
+    minutes = time.getUTCMinutes();
+  }
+
   tbDiv.style.width = `${timeBlockWidth}px`;
 
-  if (isFirst) {
-    tbDiv.style.marginLeft = `${startX}px`;
-  }
+  const hoursSpan = document.createElement('span');
+  hoursSpan.className = 'hours';
+  hoursSpan.innerText = hours;
+  const minutesSpan = document.createElement('span');
+  minutesSpan.className = 'minutes';
+  minutesSpan.innerText = minutes;
+  tbDiv.appendChild(hoursSpan);
+  tbDiv.appendChild(minutesSpan);
 
   return tbDiv;
 }

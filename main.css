@@ -82,10 +82,10 @@ body {
 }
 
 #schedule {
-  /* border: 1px solid black; */
   width: inherit;
   height: 200px;
   position: relative;
+  /* overflow: hidden; */
 }
 
 .tile {
