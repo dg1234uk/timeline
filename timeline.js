@@ -202,23 +202,23 @@ function renderTimeline() {
   }
 
   // 60 minutes * schedule zoom
-  const timeBlockWidth = 60 * scheduleState.zoom;
+  const TimeBlockWidth = 60 * scheduleState.zoom;
 
   const timelineWidth = timeline.offsetWidth;
 
-  const numberOfTimeBlocks = timelineWidth / timeBlockWidth;
+  const numberOfTimeBlocks = timelineWidth / TimeBlockWidth;
 
   // debugger;
   for (let i = 0; i < numberOfTimeBlocks; i++) {
     // debugger
     time.setUTCHours(time.getUTCHours() + 1);
-    const tileBlockDiv = createTileBlockElement(time, timeBlockWidth, startX);
-    timeline.appendChild(tileBlockDiv);
+    const TimeBlockDiv = createTimeBlockElement(time, TimeBlockWidth, startX);
+    timeline.appendChild(TimeBlockDiv);
   }
   timeline.firstElementChild.style.marginLeft = `${startX}px`;
 }
 
-function createTileBlockElement(time, timeBlockWidth, startX) {
+function createTimeBlockElement(time, TimeBlockWidth, startX) {
   // check time is a Date object
   if (!(time instanceof Date)) {
     throw new Error(`time is not time`);
@@ -243,7 +243,7 @@ function createTileBlockElement(time, timeBlockWidth, startX) {
     minutes = time.getUTCMinutes();
   }
 
-  tbDiv.style.width = `${timeBlockWidth}px`;
+  tbDiv.style.width = `${TimeBlockWidth}px`;
 
   const hoursSpan = document.createElement('span');
   hoursSpan.className = 'hours';
@@ -265,7 +265,6 @@ schedule.addEventListener('wheel', onWheelEvent, false);
 
 function onWheelEvent(e) {
   e.preventDefault();
-  console.log(e);
   scrollSchedule(e.deltaX)
 }
 
@@ -327,5 +326,3 @@ function scrollSchedule(dx=0) {
   scheduleState.startTime.setUTCMinutes(currentMins + dxMins);
   render();
 }
-
-// TODO: Do for mousewheel as well
