@@ -257,10 +257,17 @@ function createTileBlockElement(time, timeBlockWidth, startX) {
   return tbDiv;
 }
 
-var lastXPos, dragging;
+let lastXPos, dragging;
 
 schedule.addEventListener('mousedown', onMouseDown, false);
 schedule.addEventListener('touchstart', onTouchStart, false);
+schedule.addEventListener('wheel', onWheelEvent, false);
+
+function onWheelEvent(e) {
+  e.preventDefault();
+  console.log(e);
+  scrollSchedule(e.deltaX)
+}
 
 
 function onMouseDown(e) {
@@ -315,11 +322,10 @@ function onTouchEnd(e) {
 
 function scrollSchedule(dx=0) {
   // offset dx to minutes
-  const dxMins = dx * scheduleState.zoom;
+  const dxMins = dx;
   const currentMins = scheduleState.startTime.getUTCMinutes();
   scheduleState.startTime.setUTCMinutes(currentMins + dxMins);
   render();
 }
 
-// TODO: Do for touch as well
 // TODO: Do for mousewheel as well
