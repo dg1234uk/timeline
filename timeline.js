@@ -257,27 +257,61 @@ function createTileBlockElement(time, timeBlockWidth, startX) {
   return tbDiv;
 }
 
-var lastXPos, mouseLeftDown;
+var lastXPos, dragging;
 
 schedule.addEventListener('mousedown', onMouseDown, false);
-schedule.addEventListener('mousemove', onMouseDrag, false);
-window.addEventListener('mouseup', stopDrag, false);
+schedule.addEventListener('touchstart', onTouchStart, false);
+
 
 function onMouseDown(e) {
-  cursorXPos = e.offsetX;
-  mouseLeftDown = true;
+  lastXPos = e.offsetX;
+  dragging = true;
+  schedule.addEventListener('mousemove', onMouseDrag, false);
+  window.addEventListener('mouseup', stopDrag, false);
 }
 
 function onMouseDrag(e) {
-  if (mouseLeftDown) {
-    scrollSchedule(cursorXPos - (e.pageX - timeline.offsetLeft));
-    cursorXPos = e.pageX - timeline.offsetLeft;
+  if (dragging) {
+    scrollSchedule(lastXPos - (e.pageX - timeline.offsetLeft));
+    lastXPos = e.pageX - timeline.offsetLeft;
   }
 }
 
 function stopDrag(e) {
-  mouseLeftDown = false;
+  dragging = false;
+  document.removeEventListener('mousemove', onMouseDrag);
+  document.removeEventListener('mouseup', stopDrag);
 }
+
+function onTouchStart(e) {
+  e.preventDefault();
+  if (e.touches.length === 1) {
+    lastXPos = e.touches[0].clientX;
+    dragging = true;
+    document.addEventListener('touchmove', onTouchMove, false);
+    document.addEventListener('touchend', onTouchEnd, false);
+    document.addEventListener('touchcancel', onTouchEnd, false)
+  }
+}
+
+function onTouchMove(e) {
+  event.preventDefault();
+  if (dragging && e.touches.length === 1) {
+    scrollSchedule(lastXPos - (e.touches[0].pageX - timeline.offsetLeft));
+    lastXPos = e.pageX - timeline.offsetLeft;
+  }
+}
+
+function onTouchEnd(e) {
+  event.preventDefault();
+	if(event.touches.length === 0){
+		dragging = false;
+		document.removeEventListener('touchmove', onTouchMove);
+    document.removeEventListener('touchend', onTouchEnd);
+    document.removeEventListener('touchcancel', onTouchEnd);
+	}
+}
+
 
 function scrollSchedule(dx=0) {
   // offset dx to minutes

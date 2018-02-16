@@ -86,6 +86,7 @@ body {
   height: 200px;
   position: relative;
   /* overflow: hidden; */
+  /* touch-action: none; */
 }
 
 .tile {
