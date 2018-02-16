@@ -270,8 +270,8 @@ function onMouseDown(e) {
 
 function onMouseDrag(e) {
   if (mouseLeftDown) {
-    scrollSchedule((cursorXPos - e.offsetX))
-    cursorXPos = e.offsetX;
+    scrollSchedule(cursorXPos - (e.pageX - timeline.offsetLeft));
+    cursorXPos = e.pageX - timeline.offsetLeft;
   }
 }
 
