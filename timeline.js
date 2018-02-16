@@ -1,3 +1,5 @@
+// TODO: Drag to scroll
+// TODO: Set up tests
 // Test Data
 const DATA = [
   {
@@ -22,7 +24,7 @@ const DATA = [
 
 // Mins to pixels ratio
 const scheduleState = {
-  startTime: new Date(Date.UTC(18, 2, 13, 7, 15, 0)),
+  startTime: new Date(Date.UTC(18, 2, 13, 7, 0, 0)),
   zoom: 1
 }
 
@@ -175,8 +177,6 @@ function btnZoomOutHandler(e) {
 }
 
 function renderTimeline() {
-  // TODO: More like initiate timeline, rather than render sliding update
-  // TODO: Clear contents and make a div for each time to cover width
   const startTimeInMins = (scheduleState.startTime.getUTCHours() * 60) +
                           scheduleState.startTime.getUTCMinutes() +
                           (scheduleState.startTime.getUTCSeconds() / 60) +
@@ -256,3 +256,36 @@ function createTileBlockElement(time, timeBlockWidth, startX) {
 
   return tbDiv;
 }
+
+var lastXPos, mouseLeftDown;
+
+schedule.addEventListener('mousedown', onMouseDown, false);
+schedule.addEventListener('mousemove', onMouseDrag, false);
+window.addEventListener('mouseup', stopDrag, false);
+
+function onMouseDown(e) {
+  cursorXPos = e.offsetX;
+  mouseLeftDown = true;
+}
+
+function onMouseDrag(e) {
+  if (mouseLeftDown) {
+    scrollSchedule((cursorXPos - e.offsetX))
+    cursorXPos = e.offsetX;
+  }
+}
+
+function stopDrag(e) {
+  mouseLeftDown = false;
+}
+
+function scrollSchedule(dx=0) {
+  // offset dx to minutes
+  const dxMins = dx * scheduleState.zoom;
+  const currentMins = scheduleState.startTime.getUTCMinutes();
+  scheduleState.startTime.setUTCMinutes(currentMins + dxMins);
+  render();
+}
+
+// TODO: Do for touch as well
+// TODO: Do for mousewheel as well
