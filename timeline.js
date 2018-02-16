@@ -1,5 +1,5 @@
-// TODO: Drag to scroll
 // TODO: Set up tests
+// TODO: Fix tiles dropping off when moved far right
 // Test Data
 const DATA = [
   {
@@ -270,10 +270,12 @@ function onWheelEvent(e) {
 
 
 function onMouseDown(e) {
-  lastXPos = e.offsetX;
-  dragging = true;
-  schedule.addEventListener('mousemove', onMouseDrag, false);
-  window.addEventListener('mouseup', stopDrag, false);
+  if (e.button === 0) {
+    lastXPos = e.offsetX;
+    dragging = true;
+    schedule.addEventListener('mousemove', onMouseDrag, false);
+    window.addEventListener('mouseup', stopDrag, false);
+  }
 }
 
 function onMouseDrag(e) {
