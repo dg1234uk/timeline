@@ -1,5 +1,4 @@
 // TODO: Set up tests
-// TODO: Fix tiles dropping off when moved far right
 // Test Data
 const DATA = [
   {
