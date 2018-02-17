@@ -96,21 +96,21 @@ function createTileElement(tileData, schedule) {
   tileDiv.className = "tile";
 
   // Time to minutes
-  const startTimeInMins = (scheduleState.startTime.getUTCHours() * 60) +
-                          scheduleState.startTime.getUTCMinutes() +
-                          (scheduleState.startTime.getUTCSeconds() / 60) +
-                          (scheduleState.startTime.getUTCMilliseconds() / 60000);
-
-
-  const tileStartTimeInMins = (tileData.startTime.getUTCHours() * 60) +
-                              tileData.startTime.getUTCMinutes() +
-                              (tileData.startTime.getUTCSeconds() / 60) +
-                              (tileData.startTime.getUTCMilliseconds() / 60000);
-
-  const tileEndTimeInMins = (tileData.endTime.getUTCHours() * 60) +
-                              tileData.endTime.getUTCMinutes() +
-                              (tileData.endTime.getUTCSeconds() / 60) +
-                              (tileData.endTime.getUTCMilliseconds() / 60000);
+  // const startTimeInMins = (scheduleState.startTime.getUTCHours() * 60) +
+  //                         scheduleState.startTime.getUTCMinutes() +
+  //                         (scheduleState.startTime.getUTCSeconds() / 60) +
+  //                         (scheduleState.startTime.getUTCMilliseconds() / 60000);
+  //
+  //
+  // const tileStartTimeInMins = (tileData.startTime.getUTCHours() * 60) +
+  //                             tileData.startTime.getUTCMinutes() +
+  //                             (tileData.startTime.getUTCSeconds() / 60) +
+  //                             (tileData.startTime.getUTCMilliseconds() / 60000);
+  //
+  // const tileEndTimeInMins = (tileData.endTime.getUTCHours() * 60) +
+  //                             tileData.endTime.getUTCMinutes() +
+  //                             (tileData.endTime.getUTCSeconds() / 60) +
+  //                             (tileData.endTime.getUTCMilliseconds() / 60000);
 
 // difference from start time in ms
 let left = tileData.startTime - scheduleState.startTime
