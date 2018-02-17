@@ -5,26 +5,26 @@ const DATA = [
   {
     id: 0,
     title: "tile1",
-    startTime: new Date(Date.UTC(18, 2, 13, 9, 0, 0)),
-    endTime: new Date(Date.UTC(18, 2, 13, 10, 0, 0))
+    startTime: new Date(Date.UTC(2018, 1, 13, 9, 0, 0)),
+    endTime: new Date(Date.UTC(2018, 1, 13, 10, 0, 0))
   },
   {
     id: 1,
     title: "tile2",
-    startTime: new Date(Date.UTC(18, 2, 13, 8, 0, 0)),
-    endTime: new Date(Date.UTC(18, 2, 13, 10, 0, 0))
+    startTime: new Date(Date.UTC(2018, 1, 13, 8, 0, 0)),
+    endTime: new Date(Date.UTC(2018, 1, 13, 10, 0, 0))
   },
   {
     id: 2,
     title: "tile3",
-    startTime: new Date(Date.UTC(18, 2, 13, 9, 30, 0)),
-    endTime: new Date(Date.UTC(18, 2, 13, 10, 30, 0))
+    startTime: new Date(Date.UTC(2018, 1, 13, 9, 30, 0)),
+    endTime: new Date(Date.UTC(2018, 1, 13, 10, 30, 0))
   }
 ];
 
 // Mins to pixels ratio
 const scheduleState = {
-  startTime: new Date(Date.UTC(18, 2, 13, 7, 0, 0)),
+  startTime: new Date(Date.UTC(2018, 1, 13, 7, 0, 0)),
   zoom: 1
 }
 
@@ -112,10 +112,22 @@ function createTileElement(tileData, schedule) {
                               (tileData.endTime.getUTCSeconds() / 60) +
                               (tileData.endTime.getUTCMilliseconds() / 60000);
 
+// difference from start time in ms
+let left = tileData.startTime - scheduleState.startTime
+let width = tileData.endTime - tileData.startTime
+// if (left >= 0) {
+//
+// }
+
+// to mins
+left /= 60000;
+width /= 60000;
+
+
   // convert minutes to pixels with the .zoom scale
   tilePos = {
-    left: (tileStartTimeInMins - startTimeInMins) * scheduleState.zoom,
-    width: (tileEndTimeInMins - tileStartTimeInMins) * scheduleState.zoom,
+    left: left * scheduleState.zoom,
+    width: width * scheduleState.zoom,
     height: settings.tileHeight,
     top: settings.tileTop
   };
@@ -319,7 +331,6 @@ function onTouchEnd(e) {
     document.removeEventListener('touchcancel', onTouchEnd);
 	}
 }
-
 
 function scrollSchedule(dx=0) {
   // offset dx to minutes
