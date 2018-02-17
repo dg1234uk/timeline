@@ -223,7 +223,9 @@ function renderTimeline() {
 
   const timelineWidth = timeline.offsetWidth;
 
-  const numberOfTimeBlocks = timelineWidth / TimeBlockWidth;
+  const timelineWidthAdjustedForStartX = timelineWidth - startX;
+
+  const numberOfTimeBlocks = timelineWidthAdjustedForStartX / TimeBlockWidth;
 
   // debugger;
   for (let i = 0; i < numberOfTimeBlocks; i++) {
