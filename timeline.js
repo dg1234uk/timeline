@@ -5,8 +5,8 @@ const DATA = [
   {
     id: 0,
     title: "tile1",
-    startTime: new Date(Date.UTC(2018, 1, 13, 9, 0, 0)),
-    endTime: new Date(Date.UTC(2018, 1, 13, 10, 0, 0))
+    startTime: new Date(Date.UTC(2018, 1, 13, 5, 0, 0)),
+    endTime: new Date(Date.UTC(2018, 1, 13, 6, 0, 0))
   },
   {
     id: 1,
@@ -168,9 +168,15 @@ function renderSchedule() {
 
   // Create div for each data
   for (let tileData of DATA) {
-    const tileDiv = createTileElement(tileData, schedule);
-    // Add tile to schedule
-    schedule.appendChild(tileDiv);
+    // difference from start time in ms
+    const left = tileData.startTime - scheduleState.startTime
+    const width = tileData.endTime - tileData.startTime
+    const maxWidth = scheduleState.scheduleEndTime - scheduleState.startTime
+    if (left + width >= 0 && left <= maxWidth) {
+      const tileDiv = createTileElement(tileData, schedule);
+      // Add tile to schedule
+      schedule.appendChild(tileDiv);
+    }
   }
 }
 
