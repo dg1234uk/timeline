@@ -1,4 +1,5 @@
 // TODO: Set up tests
+// FIXME: zoom out and scroll time line, tiles drop off when still in view.
 // Test Data
 const DATA = [
   {
@@ -23,7 +24,7 @@ const DATA = [
 
 // Mins to pixels ratio
 const scheduleState = {
-  startTime: new Date(Date.UTC(2018, 1, 13, 7, 0, 0)),
+  startTime: new Date(Date.UTC(2018, 1, 13, 7, 45, 0)),
   zoom: 1
 }
 
@@ -194,12 +195,10 @@ function btnZoomOutHandler(e) {
 }
 
 function renderTimeline() {
-  const startTimeInMins = (scheduleState.startTime.getUTCHours() * 60) +
-                          scheduleState.startTime.getUTCMinutes() +
-                          (scheduleState.startTime.getUTCSeconds() / 60) +
-                          (scheduleState.startTime.getUTCMilliseconds() / 60000);
+  // Convert UTC time in ms to mins
+  const startTimeInMins = scheduleState.startTime.getTime() / 60000;
 
-
+  // Get reference to timeline element
   const timeline = document.getElementById('timeline');
 
   timeline.innerHTML = "";
@@ -207,37 +206,46 @@ function renderTimeline() {
   // Convert pixel width of schedule to minutes using zoom (pixels:mins)
   const scheduleWidthMins = schedule.offsetWidth * scheduleState.zoom;
 
-  // If first time is a whole hour place at 0 otherwise offset by number of mins
+  // If first time is a whole hour place at 0px
+  // otherwise offset by number of mins
   var startX;
   var time = new Date(scheduleState.startTime.getTime());
   if ((startTimeInMins % 60) === 0) {
     startX = 0;
-    time.setUTCHours(time.getUTCHours() - 1, 0, 0, 0);
+    // - 2 hours becuase we will initally add an hour in the for loop and
+    // the first time block is going to be an hour before the schedule start
+    time.setUTCHours(time.getUTCHours() - 2, 0, 0, 0);
   } else {
     startX = (60 - (startTimeInMins % 60)) * scheduleState.zoom;
-    time.setUTCHours(time.getUTCHours(), 0, 0, 0);
+    time.setUTCHours(time.getUTCHours() - 1, 0, 0, 0);
   }
 
   // 60 minutes * schedule zoom
-  const TimeBlockWidth = 60 * scheduleState.zoom;
+  const timeBlockWidth = 60 * scheduleState.zoom;
 
-  const timelineWidth = timeline.offsetWidth;
+  // +timeBlockWidth to make enough room to add leading time 1hr before start
+  const timelineWidth = timeline.offsetWidth + timeBlockWidth;
 
+  // to ensure that only the remain time/width after the first whole hour after
+  // scheduleState.startTime is used
   const timelineWidthAdjustedForStartX = timelineWidth - startX;
 
-  const numberOfTimeBlocks = timelineWidthAdjustedForStartX / TimeBlockWidth;
+  // With the remain timeline width work out how many time blocks to create
+  const numberOfTimeBlocks = timelineWidthAdjustedForStartX / timeBlockWidth;
 
-  // debugger;
+  // Create a timeBlockElement for each
   for (let i = 0; i < numberOfTimeBlocks; i++) {
-    // debugger
     time.setUTCHours(time.getUTCHours() + 1);
-    const TimeBlockDiv = createTimeBlockElement(time, TimeBlockWidth, startX);
+    const TimeBlockDiv = createTimeBlockElement(time, timeBlockWidth, startX);
     timeline.appendChild(TimeBlockDiv);
   }
-  timeline.firstElementChild.style.marginLeft = `${startX}px`;
+  // Set the first timeblock margin to position entire timeline
+  // - timeBlockWidth as start X is position of first schedule time
+  // However, the first actual time (normally not visible) block is 1hr before.
+  timeline.firstElementChild.style.marginLeft = `${startX - timeBlockWidth}px`;
 }
 
-function createTimeBlockElement(time, TimeBlockWidth, startX) {
+function createTimeBlockElement(time, timeBlockWidth, startX) {
   // check time is a Date object
   if (!(time instanceof Date)) {
     throw new Error(`time is not time`);
@@ -246,9 +254,11 @@ function createTimeBlockElement(time, TimeBlockWidth, startX) {
   // Convert pixel width of schedule to minutes using zoom (pixels:mins)
   const scheduleWidthMins = schedule.offsetWidth * scheduleState.zoom;
 
-
+  // Create a div and add its css class
   const tbDiv = document.createElement('div');
   tbDiv.className = 'timeBlock';
+
+  // Format the hours and minutes strings to display
   var hours, minutes;
   if (time.getUTCHours() < 10) {
     hours = `0${time.getUTCHours()}`;
@@ -262,8 +272,11 @@ function createTimeBlockElement(time, TimeBlockWidth, startX) {
     minutes = time.getUTCMinutes();
   }
 
-  tbDiv.style.width = `${TimeBlockWidth}px`;
+  // Set the width, calculated in renderTimeline()
+  tbDiv.style.width = `${timeBlockWidth}px`;
 
+  // Create spans with repestive classes for hours and minutes
+  // Append them to the timeBlock div
   const hoursSpan = document.createElement('span');
   hoursSpan.className = 'hours';
   hoursSpan.innerText = hours;
@@ -276,18 +289,22 @@ function createTimeBlockElement(time, TimeBlockWidth, startX) {
   return tbDiv;
 }
 
+// Globals for dragging
 let lastXPos, dragging;
 
+// Add listeners for mouse, touch and wheel (could use new pointer events)
 schedule.addEventListener('mousedown', onMouseDown, false);
 schedule.addEventListener('touchstart', onTouchStart, false);
 schedule.addEventListener('wheel', onWheelEvent, false);
 
+// wheel event handler. simply scroll by the wheel delta
 function onWheelEvent(e) {
   e.preventDefault();
   scrollSchedule(e.deltaX)
 }
 
 
+// Only if left mouse is pressed. Start drag and set up 'ending drag' events
 function onMouseDown(e) {
   if (e.button === 0) {
     lastXPos = e.offsetX;
@@ -340,9 +357,7 @@ function onTouchEnd(e) {
 }
 
 function scrollSchedule(dx=0) {
-  // offset dx to minutes
-  const dxMins = dx;
   const currentMins = scheduleState.startTime.getUTCMinutes();
-  scheduleState.startTime.setUTCMinutes(currentMins + dxMins);
+  scheduleState.startTime.setUTCMinutes(currentMins + dx);
   render();
 }
