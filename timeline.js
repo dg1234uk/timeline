@@ -5,26 +5,26 @@ const DATA = [
   {
     id: 0,
     title: "tile1",
-    startTime: new Date(Date.UTC(2018, 1, 13, 5, 0, 0)),
-    endTime: new Date(Date.UTC(2018, 1, 13, 6, 0, 0))
+    startTime: new Date(Date.UTC(2018, 1, 26, 5, 0, 0)),
+    endTime: new Date(Date.UTC(2018, 1, 26, 6, 0, 0))
   },
   {
     id: 1,
     title: "tile2",
-    startTime: new Date(Date.UTC(2018, 1, 13, 8, 0, 0)),
-    endTime: new Date(Date.UTC(2018, 1, 13, 10, 0, 0))
+    startTime: new Date(Date.UTC(2018, 1, 26, 8, 0, 0)),
+    endTime: new Date(Date.UTC(2018, 1, 26, 10, 0, 0))
   },
   {
     id: 2,
     title: "tile3",
-    startTime: new Date(Date.UTC(2018, 1, 13, 9, 30, 0)),
-    endTime: new Date(Date.UTC(2018, 1, 13, 10, 30, 0))
+    startTime: new Date(Date.UTC(2018, 1, 26, 9, 30, 0)),
+    endTime: new Date(Date.UTC(2018, 1, 26, 10, 30, 0))
   }
 ];
 
 // Mins to pixels ratio
 const scheduleState = {
-  startTime: new Date(Date.UTC(2018, 1, 13, 7, 45, 0)),
+  startTime: new Date(Date.UTC(2018, 1, 26, 7, 45, 0)),
   zoom: 1
 }
 
@@ -49,6 +49,7 @@ render();
 function render() {
   renderSchedule();
   renderTimeline();
+  updateDate(scheduleState.startTime);
 }
 
 function setScheduleEndTime(scheduleState, schedule) {
@@ -287,6 +288,41 @@ function createTimeBlockElement(time, timeBlockWidth, startX) {
   tbDiv.appendChild(minutesSpan);
 
   return tbDiv;
+}
+
+function updateDate(date) {
+  const dateDd = document.getElementById('date-dd');
+  dateDd.innerText = date.getUTCDate();
+
+  const ordinalIndicator = document.getElementById('date-ordinalIndicator');
+
+  switch (date.getUTCDate()) {
+    case 1:
+    case 21:
+    case 31:
+      ordinalIndicator.innerText = 'st';
+      break;
+    case 2:
+    case 22:
+      ordinalIndicator.innerText = 'nd';
+      break;
+    case 3:
+      ordinalIndicator.innerText = 'rd';
+      break;
+    default:
+      ordinalIndicator.innerText = 'th';
+  }
+
+  const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const dateDdd = document.getElementById('date-ddd');
+  dateDdd.innerText = daysOfWeek[date.getUTCDay()];
+
+  const months = ['January', 'Februrary', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  const dateMmmYYYY = document.getElementById('date-mmmYYYY');
+  const month = months[date.getUTCMonth()];
+  const yyyy = date.getUTCFullYear();
+  dateMmmYYYY.innerText = `${month} ${yyyy}`;
+
 }
 
 // Globals for dragging
