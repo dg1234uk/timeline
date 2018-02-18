@@ -64,7 +64,7 @@ function setScheduleEndTime(scheduleState, schedule) {
   }
 
   // Convert pixel width of schedule to minutes using zoom (pixels:mins)
-  const scheduleWidthMins = schedule.offsetWidth * scheduleState.zoom;
+  const scheduleWidthMins = schedule.offsetWidth / scheduleState.zoom;
   // Set scheduleEndTime to start time then add scheduleWidthMins to get end time
   let scheduleEndTime = new Date(scheduleState.startTime);
   // Need to convert scheduleWidthMins to milliseconds, add, create new date.
