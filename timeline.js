@@ -1,5 +1,4 @@
 // TODO: Set up tests
-// FIXME: zoom out and scroll time line, tiles drop off when still in view.
 // Test Data
 const DATA = [
   {
@@ -307,7 +306,7 @@ function onWheelEvent(e) {
 // Only if left mouse is pressed. Start drag and set up 'ending drag' events
 function onMouseDown(e) {
   if (e.button === 0) {
-    lastXPos = e.offsetX;
+    lastXPos = e.pageX - timeline.offsetLeft;
     dragging = true;
     schedule.addEventListener('mousemove', onMouseDrag, false);
     window.addEventListener('mouseup', stopDrag, false);
@@ -316,6 +315,7 @@ function onMouseDown(e) {
 
 function onMouseDrag(e) {
   if (dragging) {
+    e.stopPropagation();
     scrollSchedule(lastXPos - (e.pageX - timeline.offsetLeft));
     lastXPos = e.pageX - timeline.offsetLeft;
   }
@@ -330,6 +330,7 @@ function stopDrag(e) {
 function onTouchStart(e) {
   e.preventDefault();
   if (e.touches.length === 1) {
+    // TODO: clientX only!?!?!
     lastXPos = e.touches[0].clientX;
     dragging = true;
     document.addEventListener('touchmove', onTouchMove, false);
