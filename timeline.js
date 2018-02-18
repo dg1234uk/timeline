@@ -1,5 +1,6 @@
 // TODO: Set up tests
 // Test Data
+// Zoom NLT 0.5 maybe 0.6 is best?
 const DATA = [
   {
     id: 0,
