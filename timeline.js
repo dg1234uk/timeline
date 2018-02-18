@@ -1,6 +1,6 @@
 // TODO: Set up tests
 // Test Data
-// Zoom NLT 0.5 maybe 0.6 is best?
+// Zoom NLT 0.5 maybe 0.6 is best? Implement with setters once refactored?
 const DATA = [
   {
     id: 0,
@@ -19,6 +19,24 @@ const DATA = [
     title: "tile3",
     startTime: new Date(Date.UTC(2018, 1, 26, 9, 30, 0)),
     endTime: new Date(Date.UTC(2018, 1, 26, 10, 30, 0))
+  },
+  {
+    id: 3,
+    title: "tile3",
+    startTime: new Date(Date.UTC(2018, 1, 26, 9, 30, 0)),
+    endTime: new Date(Date.UTC(2018, 1, 26, 11, 0, 0))
+  },
+  {
+    id: 4,
+    title: "tile3",
+    startTime: new Date(Date.UTC(2018, 1, 26, 9, 30, 0)),
+    endTime: new Date(Date.UTC(2018, 1, 26, 11, 30, 0))
+  },
+  {
+    id: 5,
+    title: "tile3",
+    startTime: new Date(Date.UTC(2018, 1, 26, 12, 30, 0)),
+    endTime: new Date(Date.UTC(2018, 1, 26, 13, 30, 0))
   }
 ];
 
@@ -164,6 +182,9 @@ function renderSchedule() {
   // Clear schedule
   schedule.innerHTML = "";
 
+  // Draw schedule grid
+  renderScheduleGrid();
+
   // Save to scheduleState
   scheduleState.scheduleEndTime = setScheduleEndTime(scheduleState, schedule);
 
@@ -179,6 +200,76 @@ function renderSchedule() {
       schedule.appendChild(tileDiv);
     }
   }
+}
+
+function renderScheduleGrid() {
+
+  const grid = document.createDocumentFragment();
+
+
+  // Convert UTC time in ms to mins
+  const startTimeInMins = scheduleState.startTime.getTime() / 60000;
+  // Convert pixel width of schedule to minutes using zoom (pixels:mins)
+  const scheduleWidthMins = schedule.offsetWidth * scheduleState.zoom;
+  // If first time is a whole hour place at 0px
+  // otherwise offset by number of mins
+  var startX;
+  if ((startTimeInMins % 60) === 0) {
+    startX = 0;
+  } else {
+    startX = (60 - (startTimeInMins % 60)) * scheduleState.zoom;
+  }
+
+  // 60 minutes * schedule zoom
+  const hourSpacing = 60 * scheduleState.zoom;
+
+  // +hourSpacing to make enough room to add leading time 1hr before start
+  const timelineWidth = timeline.offsetWidth + hourSpacing;
+
+  // to ensure that only the remain time/width after the first whole hour after
+  // scheduleState.startTime is used
+  const timelineWidthAdjustedForStartX = timelineWidth - startX;
+
+  // With the remain timeline width work out how many time blocks to create
+  const numberOfHourLines = timelineWidthAdjustedForStartX / hourSpacing;
+
+  // Create a hour grid line for each hour
+  for (let i = 0; i < numberOfHourLines - 1; i++) {
+    const hourLine = createSVGGridLine();
+    // console.log(hourLine.width);
+    hourLine.style.marginLeft = `${hourSpacing - 5}px`
+    grid.appendChild(hourLine);
+  }
+
+  grid.firstElementChild.style.marginLeft = `${startX - 2.5}px`;
+
+
+  schedule.appendChild(grid);
+
+}
+
+function createSVGGridLine() {
+  const marginTop = 5;
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttributeNS(null, 'width', '5');
+  svg.setAttributeNS(null, 'height', schedule.offsetHeight);
+  svg.style.marginTop = `${marginTop}px`;
+
+  const lineElement = document.createElementNS("http://www.w3.org/2000/svg", 'path');
+  lineElement.setAttributeNS(null, 'd', `M2.5 3.5v${schedule.offsetHeight - marginTop}`);
+  lineElement.setAttributeNS(null, 'stroke', '#4D4D4D');
+  lineElement.setAttributeNS(null, 'stroke-linecap', 'square');
+
+  const circleElement = document.createElementNS("http://www.w3.org/2000/svg", 'circle');
+  circleElement.setAttributeNS(null, 'cx', '2.5');
+  circleElement.setAttributeNS(null, 'cy', '2.5');
+  circleElement.setAttributeNS(null, 'r', '2.5');
+  circleElement.setAttributeNS(null, 'fill', '#4D4D4D');
+
+  svg.appendChild(lineElement);
+  svg.appendChild(circleElement);
+
+  return svg;
 }
 
 function btnZoomInHandler(e) {
@@ -202,6 +293,7 @@ function renderTimeline() {
   // Get reference to timeline element
   const timeline = document.getElementById('timeline');
 
+  // Clear the timeline
   timeline.innerHTML = "";
 
   // Convert pixel width of schedule to minutes using zoom (pixels:mins)
@@ -243,7 +335,8 @@ function renderTimeline() {
   // Set the first timeblock margin to position entire timeline
   // - timeBlockWidth as start X is position of first schedule time
   // However, the first actual time (normally not visible) block is 1hr before.
-  timeline.firstElementChild.style.marginLeft = `${startX - timeBlockWidth}px`;
+  // *1.5 to center the text over the actual time
+  timeline.firstElementChild.style.marginLeft = `${startX - timeBlockWidth * 1.5}px`;
 }
 
 function createTimeBlockElement(time, timeBlockWidth, startX) {
@@ -278,14 +371,17 @@ function createTimeBlockElement(time, timeBlockWidth, startX) {
 
   // Create spans with repestive classes for hours and minutes
   // Append them to the timeBlock div
+  const timeDiv = document.createElement('div');
+  timeDiv.className = 'time';
   const hoursSpan = document.createElement('span');
   hoursSpan.className = 'hours';
   hoursSpan.innerText = hours;
   const minutesSpan = document.createElement('span');
   minutesSpan.className = 'minutes';
   minutesSpan.innerText = minutes;
-  tbDiv.appendChild(hoursSpan);
-  tbDiv.appendChild(minutesSpan);
+  timeDiv.appendChild(hoursSpan);
+  timeDiv.appendChild(minutesSpan);
+  tbDiv.appendChild(timeDiv);
 
   return tbDiv;
 }

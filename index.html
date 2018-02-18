@@ -9,6 +9,10 @@
 </head>
 <body>
   <div id="app">
+    <div id="control-bar">
+      <a href="#" id="btnZoomIn"><img src="search-plusG.svg" width="20" height="20" alt="Zoom In"></a><br />
+      <a href="#" id="btnZoomOut"><img src="search-minusG.svg" width="20" height="20" alt="Zoom Out"></a>
+    </div>
     <div id="date">
       <span id="date-dd" class="dd">26</span>
       <div class="dayDate">
@@ -16,18 +20,30 @@
       </div>
       <span id="date-mmmYYYY" class="monthYear">February 2018</span>
 
+      <!-- <img src="calendar-altG.svg" width="24" height="24" alt="Select a Date">
+      <img src="clockG.svg" width="24" height="24" alt="Select a Time"> -->
     </div>
     <div id="timeline">
       <div class="timeBlock">
-        <span class="hours">08</span><span class="minutes">00</span>
+        <div class="time">
+          <span class="hours">08</span><span class="minutes">00</span>
+        </div>
       </div><div class="timeBlock">
-        <span class="hours">09</span><span class="minutes">00</span>
+        <div class="time">
+          <span class="hours">09</span><span class="minutes">00</span>
+        </div>
       </div><div class="timeBlock">
-        <span class="hours">10</span><span class="minutes">00</span>
+        <div class="time">
+          <span class="hours">10</span><span class="minutes">00</span>
+        </div>
       </div><div class="timeBlock">
-        <span class="hours">11</span><span class="minutes">00</span>
+        <div class="time">
+          <span class="hours">11</span><span class="minutes">00</span>
+        </div>
       </div><div class="timeBlock">
-        <span class="hours">12</span><span class="minutes">00</span>
+        <div class="time">
+          <span class="hours">12</span><span class="minutes">00</span>
+        </div>
       </div>
     </div>
     <div id="schedule">
@@ -37,7 +53,7 @@
         test tile
       </div>
     </div>
-    <button id="btnZoomIn">+</button><button id="btnZoomOut">-</button>
+    <!-- <button id="btnZoomIn">+</button><button id="btnZoomOut">-</button> -->
   </div>
 <script src="timeline.js"></script>
 </body>

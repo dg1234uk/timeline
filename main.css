@@ -3,26 +3,33 @@
 }
 
 body {
-  background-color: #E9F0F0;
-  color: #5C5E5E;
+  background-color: #4D4D4D;
+  color: #FFF;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 #app {
-  background-color: #F5FAFA;
-  box-shadow: 0px 2px 21px 0px rgba(0, 0, 0, 0.3);
+  background-color: #000;
+  box-shadow: 0px 2px 7px 0px rgba(0, 0, 0, 0.5);
   width: 400px;
+  border-radius: 5px;
   margin: auto;
 }
 
+#control-bar {
+  float: right;
+  margin-top: 20px;
+  margin-right: 20px;
+}
+
 #date {
-  height: 120px;
+  height: 124px;
 }
 
 .dd {
+  color: #FF1354;
   font-size: 68px;
 	font-weight: 100;
-  letter-spacing: 3px;
   margin-left: 20px;
   margin-top: 10px;
   float: left;
@@ -31,6 +38,7 @@ body {
 .dayDate {
   display: inline-block;
   margin-top: 20px;
+  margin-left: 20px;
   font-weight: normal;
 }
 
@@ -42,28 +50,36 @@ body {
 
 .monthYear {
   float: left;
+  color: #A5FE00;
   font-size: 12px;
 	font-weight: 300;
-  margin-left: 25px;
-  margin-top: -10px;
+  margin-left: 22px;
+  /* margin-top: -5px; */
   clear: left;
 }
 
 #timeline {
-  background-color: #F0F5F5;
+  /* background-color: #F0F5F5; */
+  color: #4D4D4D;
   height: 20px;
   white-space: nowrap;
-  /* overflow: hidden; */
+  overflow: hidden;
   box-shadow: 0px 1px 6px -3px rgba(0, 0, 0, 0.5);
 }
 
 .timeBlock {
   display: inline-block;
   height: inherit;
-  border-left: 1px solid #BCC2C2;
-  padding-left: 2px;
+  /* border-left: 1px solid #4D4D4D; */
+  /* padding-left: 2px; */
+  text-align: center;
   padding-top: 1px;
   width: 80px;
+}
+
+.time {
+  display: inline-block;
+  height: inherit;
 }
 
 .hours {
@@ -85,7 +101,7 @@ body {
   width: inherit;
   height: 200px;
   position: relative;
-  /* overflow: hidden; */
+  overflow: hidden;
   /* touch-action: none; */
 }
 
@@ -93,7 +109,7 @@ body {
   position: absolute;
   left: 40px;
   top: 50px;
-  background-color: #4C7CFF;
+  background-color: #00B6FF;
   color: white;
   font-size: 12px;
   line-height: 20px;
