@@ -330,8 +330,7 @@ function stopDrag(e) {
 function onTouchStart(e) {
   e.preventDefault();
   if (e.touches.length === 1) {
-    // TODO: clientX only!?!?!
-    lastXPos = e.touches[0].clientX;
+    lastXPos = e.touches[0].pageX - timeline.offsetLeft;
     dragging = true;
     document.addEventListener('touchmove', onTouchMove, false);
     document.addEventListener('touchend', onTouchEnd, false);
