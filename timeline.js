@@ -114,33 +114,13 @@ function createTileElement(tileData, schedule) {
   const tileDiv = document.createElement("div");
   tileDiv.className = "tile";
 
-  // Time to minutes
-  // const startTimeInMins = (scheduleState.startTime.getUTCHours() * 60) +
-  //                         scheduleState.startTime.getUTCMinutes() +
-  //                         (scheduleState.startTime.getUTCSeconds() / 60) +
-  //                         (scheduleState.startTime.getUTCMilliseconds() / 60000);
-  //
-  //
-  // const tileStartTimeInMins = (tileData.startTime.getUTCHours() * 60) +
-  //                             tileData.startTime.getUTCMinutes() +
-  //                             (tileData.startTime.getUTCSeconds() / 60) +
-  //                             (tileData.startTime.getUTCMilliseconds() / 60000);
-  //
-  // const tileEndTimeInMins = (tileData.endTime.getUTCHours() * 60) +
-  //                             tileData.endTime.getUTCMinutes() +
-  //                             (tileData.endTime.getUTCSeconds() / 60) +
-  //                             (tileData.endTime.getUTCMilliseconds() / 60000);
+  // difference from start time in ms
+  let left = tileData.startTime - scheduleState.startTime
+  let width = tileData.endTime - tileData.startTime
 
-// difference from start time in ms
-let left = tileData.startTime - scheduleState.startTime
-let width = tileData.endTime - tileData.startTime
-// if (left >= 0) {
-//
-// }
-
-// to mins
-left /= 60000;
-width /= 60000;
+  // to mins
+  left /= 60000;
+  width /= 60000;
 
 
   // convert minutes to pixels with the .zoom scale
@@ -152,7 +132,13 @@ width /= 60000;
   };
 
   // Collision Detection of tile
-  const scheduleChildren = schedule.children;
+  let scheduleChildren = schedule.children;
+  // Array.from() used as a workaround for Edge. Edge does not support
+  // HTMLCollection with 'for of'
+  if (!(typeof scheduleChildren[Symbol.iterator] === 'function')) {
+    scheduleChildren = Array.from(scheduleChildren)
+  }
+  
   for (let element of scheduleChildren) {
     if (
       element.offsetLeft < tilePos.left + tilePos.width &&
@@ -183,7 +169,7 @@ function renderSchedule() {
   schedule.innerHTML = "";
 
   // Draw schedule grid
-  renderScheduleGrid();
+  // renderScheduleGrid();
 
   // Save to scheduleState
   scheduleState.scheduleEndTime = setScheduleEndTime(scheduleState, schedule);
