@@ -240,7 +240,6 @@ function renderScheduleGrid() {
     hourLine.style.marginLeft = `${hourSpacing - 5}px`
     grid.appendChild(hourLine);
   }
-
   grid.firstElementChild.style.marginLeft = `${startX - 2.5}px`;
 
 
