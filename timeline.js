@@ -138,7 +138,7 @@ function createTileElement(tileData, schedule) {
   if (!(typeof scheduleChildren[Symbol.iterator] === 'function')) {
     scheduleChildren = Array.from(scheduleChildren)
   }
-  
+
   for (let element of scheduleChildren) {
     if (
       element.offsetLeft < tilePos.left + tilePos.width &&
@@ -258,11 +258,13 @@ function createSVGGridLine() {
 }
 
 function btnZoomInHandler(e) {
+  e.preventDefault();
   scheduleState.zoom += 0.1;
   render();
 }
 
 function btnZoomOutHandler(e) {
+  e.preventDefault();
   scheduleState.zoom -= 0.1;
   // Ensure zoom doesn't go less than 0.1 to avoid display issues
   if (scheduleState.zoom < 0.1) {
@@ -424,6 +426,7 @@ function onWheelEvent(e) {
 // Only if left mouse is pressed. Start drag and set up 'ending drag' events
 function onMouseDown(e) {
   if (e.button === 0) {
+    e.preventDefault();
     lastXPos = e.pageX - timeline.offsetLeft;
     dragging = true;
     schedule.addEventListener('mousemove', onMouseDrag, false);
